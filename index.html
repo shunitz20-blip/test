@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מיישרים קו — מחזורי הקיץ במתמטיקה</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&family=Assistant:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:       #E8567A;   /* ורוד-מגנטה מהפלייר */
+      --teal-dark:  #C43A62;
+      --teal-light: #FDE8EF;
+      --peach:      #F5A94A;   /* כתום-אפרסק חמים */
+      --peach-light:#FFF4E0;
+      --orange:     #E8567A;   /* CTA בוורוד */
+      --dark:       #3A2E28;   /* חום-כהה חם */
+      --text:       #2D2D2D;
+      --gray:       #7A6B60;
+      --light-bg:   #FBF4EC;   /* בז' חמים כמו רקע הפלייר */
+      --white:      #FFFFFF;
+      --green:      #6B7C3A;   /* ירוק זית מהלוגו */
+      --green-light:#EEF2DF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Assistant', sans-serif;
+      color: var(--text);
+      background: var(--light-bg);
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Heebo', sans-serif;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(145deg, #F5E4CC 0%, #F0D4B8 100%);
+      color: var(--dark) !important;
+      color: white;
+      text-align: center;
+      padding: 64px 24px 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: -60px;
+      width: 220px; height: 220px;
+      background: rgba(232,86,122,0.07);
+      border-radius: 50%;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; right: -40px;
+      width: 280px; height: 280px;
+      background: rgba(107,124,58,0.07);
+      border-radius: 50%;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+
+    .hero h1 span {
+      color: var(--teal);
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--dark);
+      opacity: 0.85;
+      margin-bottom: 36px;
+      max-width: 500px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .hero-dates {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .date-pill {
+      background: white;
+      border: 2px solid var(--teal);
+      border-radius: 14px;
+      padding: 14px 28px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--dark);
+    }
+
+    .date-pill small {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      padding: 18px 44px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 24px rgba(107,124,58,0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(107,124,58,0.45);
+    }
+
+    .urgent-note {
+      margin-top: 14px;
+      font-size: 0.88rem;
+      color: var(--dark);
+      opacity: 0.8;
+    }
+
+    .urgent-note strong { color: var(--teal); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--white);
+      border-bottom: 1px solid #eee;
+    }
+
+    .stats-bar .container {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 28px;
+      padding-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Heebo', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--teal);
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--gray);
+    }
+
+    /* ── SECTION SHARED ── */
+    section {
+      padding: 56px 0;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 900;
+      margin-bottom: 32px;
+      color: var(--dark);
+    }
+
+    .section-title span {
+      color: var(--teal);
+    }
+
+    /* ── EMPATHY ── */
+    .empathy {
+      background: var(--peach-light);
+      border-right: 5px solid var(--peach);
+      padding: 40px 32px;
+      border-radius: 0 16px 16px 0;
+      margin: 0 24px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .empathy-section {
+      padding: 56px 0;
+    }
+
+    .empathy p {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .empathy p:last-child { margin-bottom: 0; }
+
+    /* ── ABOUT ── */
+    .about {
+      background: var(--white);
+    }
+
+    .about-box {
+      background: var(--green-light);
+      border-radius: 16px;
+      padding: 36px 32px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .about-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .about-box p {
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .about-box p:last-child { margin-bottom: 0; }
+
+    /* ── PROGRAM DETAILS ── */
+    .details {
+      background: var(--light-bg);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .detail-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .detail-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .detail-label {
+      font-size: 0.78rem;
+      color: var(--gray);
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    /* ── WHAT YOU GET ── */
+    .benefits {
+      background: var(--white);
+    }
+
+    .benefit-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .benefit-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--green-light);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .benefit-check {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .benefit-text strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3px;
+    }
+
+    .benefit-text span {
+      font-size: 0.88rem;
+      color: var(--gray);
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials {
+      background: var(--peach-light);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      position: relative;
+    }
+
+    .testimonial-card::before {
+      content: "❝";
+      font-size: 3rem;
+      color: var(--peach);
+      line-height: 1;
+      display: block;
+      margin-bottom: 8px;
+      font-family: 'Heebo', sans-serif;
+    }
+
+    .testimonial-card p {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .stars { color: #F5A623; font-size: 1.1rem; margin-bottom: 6px; }
+
+    .author {
+      font-size: 0.85rem;
+      color: var(--gray);
+      font-style: normal;
+    }
+
+    /* ── PRICING / CTA ── */
+    .pricing {
+      background: var(--white);
+    }
+
+    .price-card {
+      background: var(--dark);
+      border-radius: 20px;
+      padding: 44px 36px;
+      text-align: center;
+      color: white;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .price-card h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .price-card .tagline {
+      font-size: 0.9rem;
+      opacity: 0.75;
+      margin-bottom: 28px;
+    }
+
+    .bit-box {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .bit-box .bit-label {
+      font-size: 0.85rem;
+      opacity: 0.75;
+      margin-bottom: 6px;
+    }
+
+    .bit-box .bit-number {
+      font-family: 'Heebo', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      color: var(--peach);
+    }
+
+    .bit-box .bit-name {
+      font-size: 0.9rem;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+
+    .price-note {
+      font-size: 0.82rem;
+      opacity: 0.65;
+      margin-top: 14px;
+    }
+
+    .register-btn {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      padding: 18px 44px;
+      border-radius: 10px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+      width: 100%;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 20px rgba(232,86,122,0.4);
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(232,86,122,0.55);
+    }
+
+    /* ── URGENCY ── */
+    .urgency {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--peach) 100%);
+      text-align: center;
+      padding: 48px 24px;
+      color: white;
+    }
+
+    .urgency h2 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .urgency p {
+      font-size: 1.05rem;
+      opacity: 0.92;
+      margin-bottom: 28px;
+    }
+
+    /* ── SCHEDULE ── */
+    .schedule {
+      background: var(--white);
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    .schedule-table thead {
+      background: var(--green);
+      color: white;
+    }
+
+    .schedule-table th {
+      padding: 14px 18px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .schedule-table td {
+      padding: 14px 18px;
+      font-size: 0.93rem;
+      border-bottom: 1px solid #eee;
+      color: var(--text);
+    }
+
+    .schedule-table tr:last-child td { border-bottom: none; }
+
+    .schedule-table tr:nth-child(even) {
+      background: var(--green-light);
+    }
+
+    .schedule-table .time-cell {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* ── FAQ ── */
+    .faq {
+      background: var(--light-bg);
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    }
+
+    .faq-item h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .faq-item p {
+      font-size: 0.93rem;
+      color: var(--gray);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--peach);
+      text-decoration: none;
+    }
+
+    footer strong {
+      color: white;
+    }
+
+    /* ── STICKY CTA ── */
+    .sticky-cta {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--teal);
+      padding: 14px 24px;
+      z-index: 100;
+      text-align: center;
+    }
+
+    .sticky-cta a {
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .sticky-cta { display: block; }
+      body { padding-bottom: 64px; }
+      .about-box { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">☀️ קיץ 2026 · פרדס חנה-כרכור</div>
+    <img src="../לוגו/לוגו מעודכן מיישרים קו.png" alt="מיישרים קו" style="display:block; margin: 0 auto 22px; width:160px; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.25));">
+    <h1>הילד.ה שלך מסיים את השנה<br><span>עם פערים במתמטיקה?</span></h1>
+    <p class="hero-sub">
+      3 מפגשים של שיעור כפול = <strong>6 שיעורים</strong> בקבוצה קטנה — וילדך נכנס לספטמבר מוכן, בטוח ומוכן לנצח.
+    </p>
+
+    <div class="hero-dates">
+      <div class="date-pill">
+        <small>מחזור 1</small>
+        16–18 באוגוסט
+      </div>
+      <div class="date-pill">
+        <small>מחזור 2</small>
+        23–25 באוגוסט
+      </div>
+    </div>
+
+    <a href="https://www.bitpay.co.il/app/pay/0509478440" target="_blank" class="btn-primary">אני רוצה מקום לילד.ה שלי ←</a>
+    <p class="urgent-note"><strong>⚠️ מספר המקומות מוגבל</strong> — עד 5 ילדים בקבוצה</p>
+  </div>
+</section>
+
+<!-- ══════════ STATS BAR ══════════ -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stat">
+      <div class="stat-number">3</div>
+      <div class="stat-label">מפגשים = 6 שיעורים!</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">עד 5</div>
+      <div class="stat-label">ילדים בקבוצה</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">ד'–ז'</div>
+      <div class="stat-label">כיתות</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">פ"ח</div>
+      <div class="stat-label">כרכור</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EMPATHY ══════════ -->
+<section class="empathy-section">
+  <div class="container">
+    <div class="empathy">
+      <p>הילד.ה שלך מסיים את השנה עם תחושה שמשהו לא לגמרי סגור במתמטיקה.</p>
+      <p>אולי הציונים בסדר, אבל את.ה יודע.ת שהבסיס לא מוצק. ספטמבר מתקרב, והחומר רק הולך להיות יותר מורכב.</p>
+      <p>מרגיש.ה שאם לא עוצרים עכשיו ומסדרים את זה — הפערים רק יגדלו.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section class="about">
+  <div class="container">
+    <h2 class="section-title">אני <span>שונית</span></h2>
+    <div class="about-box">
+      <img src="../לוגו/.claude/תמונה שונית.jpg" alt="שונית" style="width:100px; height:100px; border-radius:50%; object-fit:cover; flex-shrink:0; box-shadow:0 4px 16px rgba(0,0,0,0.15);">
+      <div>
+        <p>מורה למתמטיקה שעובדת עם ילדים בגיל יסודי כבר שנים רבות.</p>
+        <p>ידעתי מהר מאוד שמה שבאמת עוזר לילדים זה לא עוד תרגול — אלא להבין איפה הפקק, לסגור אותו, ולהרגיש את ה"אהה!" הזה.</p>
+        <p>ראיתי מאות ילדים נכנסים עם חרדה ויוצאים עם ביטחון. אני כאן כדי לעשות את זה גם לילד.ה שלך.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROGRAM DETAILS ══════════ -->
+<section class="details">
+  <div class="container">
+    <h2 class="section-title">מה <span>בתכנית?</span></h2>
+    <div class="details-grid">
+      <div class="detail-card">
+        <div class="detail-icon">📅</div>
+        <div class="detail-label">מחזור 1</div>
+        <div class="detail-value">16–18 באוגוסט</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">📅</div>
+        <div class="detail-label">מחזור 2</div>
+        <div class="detail-value">23–25 באוגוסט</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">⏱️</div>
+        <div class="detail-label">כל מפגש</div>
+        <div class="detail-value">שיעור כפול (שעה וחצי)</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">👥</div>
+        <div class="detail-label">גודל קבוצה</div>
+        <div class="detail-value">עד 5 ילדים</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">📍</div>
+        <div class="detail-label">מיקום</div>
+        <div class="detail-value">פרדס חנה-כרכור</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-icon">🎓</div>
+        <div class="detail-label">לכיתות</div>
+        <div class="detail-value">ד', ה', ו' ו-ז'</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ BENEFITS ══════════ -->
+<section class="benefits">
+  <div class="container">
+    <h2 class="section-title">מה <span>ילדך מקבל?</span></h2>
+    <ul class="benefit-list">
+      <li>
+        <div class="benefit-check">✅</div>
+        <div class="benefit-text">
+          <strong>חיזוק יסודות</strong>
+          <span>מאתרים בדיוק מה לא יושב טוב — ומסדרים את זה, בלי בושה ובלי לחץ.</span>
+        </div>
+      </li>
+      <li>
+        <div class="benefit-check">✅</div>
+        <div class="benefit-text">
+          <strong>סגירת פערים</strong>
+          <span>3 שיעורים כפולים = 6 שיעורים ממוקדים שעוסקים בדיוק בחומר שרלוונטי לשנה הבאה.</span>
+        </div>
+      </li>
+      <li>
+        <div class="benefit-check">✅</div>
+        <div class="benefit-text">
+          <strong>בניית ביטחון לקראת השנה החדשה</strong>
+          <span>ילדך נכנס לספטמבר עם "אני יכול.ה" — לא עם "אני לא מבין.ה מתמטיקה".</span>
+        </div>
+      </li>
+      <li>
+        <div class="benefit-check">✅</div>
+        <div class="benefit-text">
+          <strong>קבוצה קטנה ואישית</strong>
+          <span>עד 5 ילדים בלבד — כי כל ילד.ה מגיע.ה לתשומת לב אמיתית.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════ SCHEDULE ══════════ -->
+<section class="schedule">
+  <div class="container">
+    <h2 class="section-title">לוח <span>הזמנים</span></h2>
+    <p style="margin-bottom: 24px; color: var(--gray);">כל מחזור מתקיים על פני 3 ימים — כל קבוצת כיתה בשעה שלה:</p>
+    <table class="schedule-table">
+      <thead>
+        <tr>
+          <th>קבוצת כיתה</th>
+          <th>שעות</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>כיתות ד'</td>
+          <td class="time-cell">09:00 – 10:30</td>
+        </tr>
+        <tr>
+          <td>כיתות ה'</td>
+          <td class="time-cell">10:30 – 12:00</td>
+        </tr>
+        <tr>
+          <td>כיתות ו'</td>
+          <td class="time-cell">12:00 – 13:30</td>
+        </tr>
+        <tr>
+          <td>כיתות ז'</td>
+          <td class="time-cell">14:00 – 15:30</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 16px; font-size: 0.85rem; color: var(--gray);">⚠️ כל קבוצה מוגבלת לעד 5 ילדים — ברגע שהקבוצה מתמלאת, ההרשמה נסגרת.</p>
+  </div>
+</section>
+
+<!-- ══════════ TESTIMONIALS ══════════ -->
+<section class="testimonials">
+  <div class="container">
+    <h2 class="section-title">מה <span>אומרים ההורים?</span></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"שונית היא מחוללת קסמים עם שיטת לימוד מנצחת. הילד שלי קיבל 100 ופשוט לא האמין לעצמו!"</p>
+        <p class="author">— הורה מרוצה, פרדס חנה</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"היי, רציתי להודות לך — זה לא מובן מאליו שלקחת את אור בשתי ידיים גם אם לזמן קצר. הוא הגיע לבחינה מוכן, מלא בביטחון."</p>
+        <p class="author">— אמא של אור</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"שונית אלופה! אלה חזרה מהמבחן בהרגשה ממש טובה. הדברים שלימדת אותה ממש עזרו לה."</p>
+        <p class="author">— אמא של אלה</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PRICING / REGISTER ══════════ -->
+<section class="pricing" id="register">
+  <div class="container">
+    <h2 class="section-title" style="text-align:center;">איך <span>נרשמים?</span></h2>
+    <div class="price-card">
+      <h3>מיישרים קו — מחזורי הקיץ</h3>
+      <p class="tagline">3 שיעורים כפולים (= 6 שיעורים!) · עד 5 ילדים · פרדס חנה-כרכור</p>
+
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 4px;">מחיר לכל המחזור</div>
+        <div style="font-family: 'Heebo', sans-serif; font-size: 3rem; font-weight: 900; color: var(--peach); line-height: 1;">₪450</div>
+        <div style="font-size: 0.82rem; opacity: 0.65; margin-top: 6px;">3 שיעורים כפולים = 6 שיעורים · קבוצה קטנה ואישית</div>
+      </div>
+
+      <div class="bit-box">
+        <div class="bit-label">לתשלום ורישום — שלחו ביט ל:</div>
+        <div class="bit-number">050-947-8440</div>
+        <div class="bit-name">שונית זהבי בן סימון</div>
+      </div>
+
+      <a href="https://www.bitpay.co.il/app/pay/0509478440" class="register-btn" target="_blank">
+        לתשלום בביט ←
+      </a>
+      <p class="price-note">לפרטים נוספים ולהרשמה — ניתן גם להתקשר: <a href="tel:0509478440" style="color:var(--peach);">050-9478440</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ URGENCY ══════════ -->
+<section class="urgency">
+  <div class="container">
+    <h2>⚠️ מספר המקומות מוגבל</h2>
+    <p>כל קבוצה מוגבלת לעד 5 ילדים — כדי שכל ילד.ה יקבל.ת תשומת לב אמיתית.<br>כשהמקומות מתמלאים — הם מתמלאים.</p>
+    <a href="https://www.bitpay.co.il/app/pay/0509478440" target="_blank" class="btn-primary" style="max-width:340px; display:inline-block;">
+      שמרו לי מקום עכשיו ←
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="faq">
+  <div class="container">
+    <h2 class="section-title">שאלות <span>נפוצות</span></h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h4>לאיזה כיתות מתאים המחזור?</h4>
+        <p>למסיימי כיתות ד', ה', ו' ו-ז' — תלמידים שרוצים להיכנס לשנה החדשה עם בסיס חזק יותר.</p>
+      </div>
+      <div class="faq-item">
+        <h4>כמה ילדים יש בכל קבוצה?</h4>
+        <p>עד 5 ילדים בלבד — כדי שהלמידה תהיה אישית וממוקדת.</p>
+      </div>
+      <div class="faq-item">
+        <h4>כמה מפגשים יש?</h4>
+        <p>3 מפגשים על פני 3 ימים רצופים — כל מפגש הוא שיעור כפול (שעה וחצי), כלומר בסך הכל <strong>6 שיעורים</strong>.</p>
+      </div>
+      <div class="faq-item">
+        <h4>איפה מתקיימים המפגשים?</h4>
+        <p>באזור פרדס חנה-כרכור. הפרטים המדויקים יימסרו עם האישור.</p>
+      </div>
+      <div class="faq-item">
+        <h4>איך מאשרים רישום?</h4>
+        <p>שולחים תשלום בביט למספר 050-9478440 ומתקשרים/שולחים הודעה לשונית לאישור המחזור הרצוי.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FINAL CTA ══════════ -->
+<section style="background: var(--green); text-align:center; padding: 64px 24px;">
+  <div class="container">
+    <h2 style="color: white; font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 14px;">
+      הקיץ הוא הזמן הכי טוב לסגור את הפערים.
+    </h2>
+    <p style="color: rgba(255,255,255,0.75); margin-bottom: 32px; font-size: 1.05rem;">
+      לפני שהחומר מסתבך, לפני שהלחץ חוזר — שלושה מפגשים יכולים לשנות את כל השנה.
+    </p>
+    <a href="https://www.bitpay.co.il/app/pay/0509478440" target="_blank" class="btn-primary" style="max-width:360px; display:inline-block;">
+      אני רוצה מקום לילד.ה שלי ←
+    </a>
+    <p style="color: rgba(255,255,255,0.5); margin-top: 16px; font-size: 0.85rem;">
+      לפרטים: <a href="tel:0509478440" style="color: var(--peach);">050-9478440</a> — שונית
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <p><strong>שונית זהבי בן סימון</strong> · מורה למתמטיקה · פרדס חנה-כרכור</p>
+  <p style="margin-top:8px;"><a href="tel:0509478440">050-9478440</a></p>
+</footer>
+
+<!-- ══════════ STICKY CTA (MOBILE) ══════════ -->
+<div class="sticky-cta">
+  <a href="https://www.bitpay.co.il/app/pay/0509478440" target="_blank">שמרו לי מקום עכשיו ←</a>
+</div>
+
+</body>
+</html>
